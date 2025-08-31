@@ -1,0 +1,31 @@
+on:
+ push:
+   branches:
+   - "main"
+   - "features/**"
+permissions: write-all
+jobs:
+  terraform-init-plan:
+    name: "terraform init plan"
+    runs-on: testrunner
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5.0.0
+    
+    - name: Azure Login
+      uses: Azure/login@v2.3.0
+      with:
+       client-id: cf59c6d9-8504-4167-aee2-39634eda9c71
+       tenant-id: beb0c4c1-6e0d-47ae-9e96-267a17908122
+       subscription-id: 52172e85-52db-422d-b74e-9204936ad848x
+
+    - name: Terraform Init
+      id: Init
+      run: terraform init -input=false
+      working-directory: environments/dev
+
+    - name: Terraform plan
+      id: Plan
+      run: terraform plan -input=false
+      working-directory: environments/dev
+       
