@@ -30,4 +30,51 @@ jobs:
       id: Plan
       run: terraform plan -input=false
       working-directory: environments/dev
-       
+
+  terraform-Scanning:
+    name: "terraform scan"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5.0.0
+          
+    - name: Terraform security scan
+      uses: triat/terraform-security-scan@v3.1.0
+      with:
+        tfsec_actions_working_dir: environments
+
+    - name: GitHub Action linting Terraform files
+      uses: devops-infra/action-tflint@v0.3
+      with:
+        fail_on_changes: false
+        dir_filter: environments
+        
+  terraform-apply:
+    name: "terraform apply"
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5.0.0
+      
+    - name: Install Terraform
+      uses: little-core-labs/install-terraform@v2.0.0
+      with:
+        version: 1.12.2
+      
+    - name: Azure Login
+      uses: Azure/login@v2.3.0
+      with:
+       client-id: cf59c6d9-8504-4167-aee2-39634eda9c71
+       tenant-id: beb0c4c1-6e0d-47ae-9e96-267a17908122
+       subscription-id: 52172e85-52db-422d-b74e-9204936ad848
+
+    - name: Terraform Init
+      id: Init
+      run: terraform init -input=false
+      working-directory: environments/dev
+
+    - name: Terraform Apply
+      id: Plan
+      run: terraform apply 
+      working-directory: environments/dev
