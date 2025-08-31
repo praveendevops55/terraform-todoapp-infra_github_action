@@ -38,13 +38,13 @@ jobs:
     - name: Terraform security scan
       uses: aquasecurity/tfsec-action@v1.0.3
       with:
-        working_directory: environments
+        working_directory: .
 
     - name: GitHub Action linting Terraform files
       uses: devops-infra/action-tflint@v0.3
       with:
         fail_on_changes: false
-        dir_filter: environments
+        dir_filter: .
         
   terraform-apply:
     name: "terraform apply"
